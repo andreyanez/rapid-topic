@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Spinner } from './components/Spinner';
 
+const REDDIT_URL = 'https://www.reddit.com/r/Showerthoughts/random.json';
+
 function App() {
 	const [savedTopics, setSavedTopics] = useState<string[]>([]);
 
@@ -15,13 +17,14 @@ function App() {
 		setSavedTopics(current => [...current, newTopic]);
 	}
 
-	function handleDelete() {
-		localStorage.removeItem('topics');
-		setSavedTopics([]);
+	function handleTopicDelete(topic: string) {
+		setSavedTopics(prevTopics => {
+			return prevTopics.filter(prevTopic => prevTopic !== topic);
+		});
 	}
 
 	async function getPost() {
-		const res = await fetch('https://www.reddit.com/r/Showerthoughts/random.json');
+		const res = await fetch(REDDIT_URL);
 		const json = await res.json();
 		return json;
 	}
@@ -61,7 +64,6 @@ function App() {
 								return <li key={idx}>{topic}</li>;
 							})}
 						</ul>
-						<button onClick={handleDelete}>Delete saved topics</button>
 					</div>
 				) : null}
 			</main>
@@ -84,10 +86,14 @@ function App() {
 					<h4>Saved topics</h4>
 					<ul>
 						{savedTopics.map((topic: string, idx: number) => {
-							return <li key={idx}>{topic}</li>;
+							return (
+								<li key={idx}>
+									<p>{topic}</p>
+									<button onClick={() => handleTopicDelete(topic)}>❌</button>
+								</li>
+							);
 						})}
 					</ul>
-					<button onClick={handleDelete}>Delete saved topics</button>
 				</div>
 			) : null}
 		</main>
