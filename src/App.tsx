@@ -5,10 +5,19 @@ import { Spinner } from './components/Spinner';
 function App() {
 	const [savedTopics, setSavedTopics] = useState<string[]>([]);
 
-	function handleClick(topicData: any) {
+	function handleClick(topicData: any): void {
 		const title = topicData.title;
 		const body = topicData.selftext;
-		setSavedTopics(current => [...current, title.concat(' ', body)]);
+		const newTopic = title.concat(' ', body);
+
+		if (savedTopics.includes(newTopic)) return;
+
+		setSavedTopics(current => [...current, newTopic]);
+	}
+
+	function handleDelete() {
+		localStorage.removeItem('topics');
+		setSavedTopics([]);
 	}
 
 	async function getPost() {
@@ -52,6 +61,7 @@ function App() {
 								return <li key={idx}>{topic}</li>;
 							})}
 						</ul>
+						<button onClick={handleDelete}>Delete saved topics</button>
 					</div>
 				) : null}
 			</main>
@@ -77,6 +87,7 @@ function App() {
 							return <li key={idx}>{topic}</li>;
 						})}
 					</ul>
+					<button onClick={handleDelete}>Delete saved topics</button>
 				</div>
 			) : null}
 		</main>
