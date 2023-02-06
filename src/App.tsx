@@ -5,8 +5,10 @@ import { Spinner } from './components/Spinner';
 function App() {
 	const [savedTopics, setSavedTopics] = useState<string[]>([]);
 
-	function saveTopic(newTopic: string) {
-		setSavedTopics(current => [...current, newTopic]);
+	function handleClick(topicData: any) {
+		const title = topicData.title;
+		const body = topicData.selftext;
+		setSavedTopics(current => [...current, title.concat(' ', body)]);
 	}
 
 	async function getPost() {
@@ -42,6 +44,16 @@ function App() {
 				<h1>Rapid Topic</h1>
 				<button onClick={() => refetch()}>Get new topic</button>
 				<Spinner />
+				{savedTopics.length ? (
+					<div>
+						<h4>Saved topics</h4>
+						<ul>
+							{savedTopics.map((topic: string, idx: number) => {
+								return <li key={idx}>{topic}</li>;
+							})}
+						</ul>
+					</div>
+				) : null}
 			</main>
 		);
 	}
@@ -55,13 +67,7 @@ function App() {
 				<p>{topic[0].data.children[0].data.selftext}</p>
 			) : null}
 			<div>
-				<button
-					onClick={() => {
-						saveTopic(topic[0].data.children[0].data.title);
-					}}
-				>
-					Save topic
-				</button>
+				<button onClick={() => handleClick(topic[0].data.children[0].data)}>Save topic</button>
 			</div>
 			{savedTopics.length ? (
 				<div>
