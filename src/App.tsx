@@ -12,19 +12,32 @@ function App() {
 		isFetching,
 		data: topic,
 		isError,
+		isLoading,
 		refetch,
 	} = useQuery({
 		queryKey: ['topic'],
 		queryFn: getPost,
 		refetchOnWindowFocus: false,
-		enabled: false,
 	});
+
+	if (isLoading || isFetching) {
+		return (
+			<main>
+				<h1>Rapid Topic</h1>
+				<button onClick={() => refetch()}>Get new topic</button>
+				<Spinner />
+			</main>
+		);
+	}
 
 	return (
 		<main>
 			<h1>Rapid Topic</h1>
-			<button onClick={() => refetch()}>get random topic</button>
-			{topic ? <p>{topic[0].data.children[0].data.title}</p> : null}
+			<button onClick={() => refetch()}>Get new topic</button>
+			<h2>{topic[0].data.children[0].data.title}</h2>
+			{topic[0].data.children[0].data.selftext.length > 0 ? (
+				<p>{topic[0].data.children[0].data.selftext}</p>
+			) : null}
 		</main>
 	);
 }
