@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import eventBus from '../EventBus';
 
 export const TopicList = () => {
 	const [savedTopics, setSavedTopics] = useState<string[]>([]);
 
 	useEffect(() => {
+		eventBus.on('updateTopics', (data: string) => {
+			setSavedTopics(current => [...current, data]);
+		});
+
 		const topics = JSON.parse(localStorage.getItem('topics')!);
 		if (topics) setSavedTopics(topics);
+
+		return () => {
+			eventBus.remove('updateTopics');
+		};
 	}, []);
 
 	useEffect(() => {

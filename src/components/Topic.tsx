@@ -14,14 +14,18 @@ export const Topic = () => {
 		return json;
 	}
 
-	function handleClick(topicData: any): void {
+	function handleSave(topicData: any): void {
 		const title = topicData.title;
 		const body = topicData.selftext;
 		const newTopic = title.concat(' ', body);
 
+		//if topic already exists on saved topics, don't save it again.
 		if (savedTopics.includes(newTopic)) return;
 
 		setSavedTopics(current => [...current, newTopic]);
+
+		//dispatch event so topic list adds the new topic
+		eventBus.dispatch('updateTopics', newTopic);
 	}
 
 	useEffect(() => {
@@ -31,6 +35,10 @@ export const Topic = () => {
 
 		const topics = JSON.parse(localStorage.getItem('topics')!);
 		if (topics) setSavedTopics(topics);
+
+		return () => {
+			eventBus.remove('fetchTopic');
+		};
 	}, []);
 
 	useEffect(() => {
@@ -53,22 +61,24 @@ export const Topic = () => {
 		return <Spinner />;
 	}
 
+	if (isError) {
+		return <p>There was an error. Please try again.</p>;
+	}
+
 	return (
 		<>
 			<h2>{topic[0].data.children[0].data.title}</h2>
 			{topic[0].data.children[0].data.selftext.length > 0 ? (
 				<p>{topic[0].data.children[0].data.selftext}</p>
 			) : null}
-			<div>
-				<button
-					className="inline-block rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-[2px] focus:outline-none focus:ring active:text-opacity-75"
-					onClick={() => handleClick(topic[0].data.children[0].data)}
-				>
-					<span className="block rounded-full px-8 py-3 text-sm font-medium hover:bg-transparent">
-						Save topic
-					</span>
-				</button>
-			</div>
+			<button
+				className="inline-block rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-[2px] focus:outline-none focus:ring active:text-opacity-75"
+				onClick={() => handleSave(topic[0].data.children[0].data)}
+			>
+				<span className="block rounded-full px-8 py-3 text-sm font-medium hover:bg-transparent">
+					Save topic
+				</span>
+			</button>
 		</>
 	);
 };
