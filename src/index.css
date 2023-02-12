@@ -3,12 +3,13 @@
 @tailwind utilities;
 
 :root {
+	@apply text-gray-900;
+
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 	line-height: 1.5;
 	font-weight: 400;
 
 	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -18,13 +19,18 @@
 }
 
 body {
+	@apply bg-gray-50;
 	margin: 0;
 	display: flex;
 	justify-content: center;
 	align-content: center;
-	min-height: 100vh;
 }
 
 button {
 	-webkit-tap-highlight-color: transparent;
+}
+
+main {
+	@apply container max-w-7xl px-8 py-16;
+	min-height: 100vh;
 }

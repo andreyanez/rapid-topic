@@ -30,16 +30,14 @@ export const TopicList = () => {
 	return (
 		<>
 			{savedTopics.length ? (
-				<div>
-					<h4>Saved topics</h4>
-					<ul>
+				<div className="container max-w-5xl mx-auto">
+					<h4 className="text-md font-black text-center mb-8">Your saved topics</h4>
+					<ul className="space-y-4">
 						{savedTopics.map((topic: string, idx: number) => {
 							return (
-								<li key={idx}>
-									<p>
-										{topic}
-										<button onClick={() => handleTopicDelete(topic)}>❌</button>
-									</p>
+								<li key={idx} className="flex items-center gap-x-2">
+									<p>- {topic}</p>
+									<button onClick={() => handleTopicDelete(topic)}>❌</button>
 								</li>
 							);
 						})}

@@ -66,19 +66,21 @@ export const Topic = () => {
 	}
 
 	return (
-		<>
-			<h2>{topic[0].data.children[0].data.title}</h2>
-			{topic[0].data.children[0].data.selftext.length > 0 ? (
-				<p>{topic[0].data.children[0].data.selftext}</p>
-			) : null}
+		<section className="mb-8 text-center max-w-5xl mx-auto">
+			<div className="mb-8 md:mb-12">
+				<h2 className="mb-4 font-semibold text-xl">{topic[0].data.children[0].data.title}.</h2>
+				{topic[0].data.children[0].data.selftext.length > 0 ? (
+					<p>{topic[0].data.children[0].data.selftext}</p>
+				) : null}
+			</div>
 			<button
-				className="inline-block rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-[2px] focus:outline-none focus:ring active:text-opacity-75"
+				className="inline-block text-white  rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-[2px] focus:outline-none focus:ring active:text-opacity-75"
 				onClick={() => handleSave(topic[0].data.children[0].data)}
 			>
 				<span className="block rounded-full px-8 py-3 text-sm font-medium hover:bg-transparent">
 					Save topic
 				</span>
 			</button>
-		</>
+		</section>
 	);
 };
