@@ -8,6 +8,7 @@ const REDDIT_URL = 'https://www.reddit.com/r/Showerthoughts/random.json';
 export const Topic = () => {
 	const [savedTopics, setSavedTopics] = useState<string[]>([]);
 
+	// Finds a random post
 	async function getPost() {
 		const res = await fetch(REDDIT_URL);
 		const json = await res.json();
@@ -15,6 +16,7 @@ export const Topic = () => {
 	}
 
 	function handleSave(topicData: any): void {
+		// concatenates the title and body of the post
 		const title = topicData.title;
 		const body = topicData.selftext;
 		const newTopic = title.concat(' ', body);
@@ -22,6 +24,7 @@ export const Topic = () => {
 		//if topic already exists on saved topics, don't save it again.
 		if (savedTopics.includes(newTopic)) return;
 
+		// saves it to the topics array
 		setSavedTopics(current => [...current, newTopic]);
 
 		//dispatch event so topic list adds the new topic
@@ -29,18 +32,22 @@ export const Topic = () => {
 	}
 
 	useEffect(() => {
+		// Event bus listents to "Get Topic" event and fetches new topic
 		eventBus.on('fetchTopic', () => {
 			refetch();
 		});
 
+		// get localstorage array and set it to the state
 		const topics = JSON.parse(localStorage.getItem('topics')!);
 		if (topics) setSavedTopics(topics);
 
+		// cleanup
 		return () => {
 			eventBus.remove('fetchTopic');
 		};
 	}, []);
 
+	// sets the updated topics list to localstorage
 	useEffect(() => {
 		if (savedTopics.length > 0) localStorage.setItem('topics', JSON.stringify(savedTopics));
 	}, [savedTopics]);
@@ -55,6 +62,7 @@ export const Topic = () => {
 		queryKey: ['topic'],
 		queryFn: getPost,
 		refetchOnWindowFocus: false,
+		// checks if upvote count is > 250, if not it refetches
 		onSuccess(topic) {
 			let upVoteCount = topic[0].data.children[0].data.score;
 			if (upVoteCount < 250) refetch();
