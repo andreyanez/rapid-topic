@@ -55,6 +55,10 @@ export const Topic = () => {
 		queryKey: ['topic'],
 		queryFn: getPost,
 		refetchOnWindowFocus: false,
+		onSuccess(topic) {
+			let upVoteCount = topic[0].data.children[0].data.score;
+			if (upVoteCount < 250) refetch();
+		},
 	});
 
 	if (isLoading || isFetching) {
