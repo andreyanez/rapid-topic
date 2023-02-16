@@ -17,9 +17,7 @@ export const TopicList = () => {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (savedTopics.length > 0) localStorage.setItem('topics', JSON.stringify(savedTopics));
-	}, [savedTopics]);
+	if (savedTopics.length > 0) localStorage.setItem('topics', JSON.stringify(savedTopics));
 
 	function handleTopicDelete(topic: string) {
 		setSavedTopics(prevTopics => {

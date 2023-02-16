@@ -48,9 +48,7 @@ export const Topic = () => {
 	}, []);
 
 	// sets the updated topics list to localstorage
-	useEffect(() => {
-		if (savedTopics.length > 0) localStorage.setItem('topics', JSON.stringify(savedTopics));
-	}, [savedTopics]);
+	if (savedTopics.length > 0) localStorage.setItem('topics', JSON.stringify(savedTopics));
 
 	const {
 		isFetching,
