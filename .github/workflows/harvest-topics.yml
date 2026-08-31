@@ -1,0 +1,50 @@
+name: Harvest topics
+
+# Pulls fresh r/Showerthoughts titles into public/topics.json once a day.
+# The commit this makes is what triggers Netlify to redeploy with new content.
+
+on:
+  schedule:
+    - cron: '17 6 * * *' # 06:17 UTC daily, off the hour to dodge peak load
+  workflow_dispatch: # lets you harvest on demand from the Actions tab
+
+# Needed so the job can push the updated pool back to the branch.
+permissions:
+  contents: write
+
+concurrency:
+  group: harvest-topics
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    # Seven feeds spaced 75s apart, plus room for rate-limit backoff.
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # No install step: the harvester is dependency-free on purpose.
+      - name: Harvest
+        run: node scripts/harvest-topics.mjs
+
+      - name: Commit if the pool changed
+        run: |
+          if [[ -z "$(git status --porcelain public/topics.json)" ]]; then
+            echo "No new topics, nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/topics.json
+          # No [skip ci] here on purpose: Netlify treats that as "skip the build",
+          # and this commit is exactly what should trigger a redeploy. There's no
+          # loop risk because this workflow only runs on schedule/dispatch.
+          git commit -m "chore: harvest new topics"
+          git push
